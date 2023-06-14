@@ -45,3 +45,10 @@ body {
     background-color: #cad048;
   }
   
+
+  @media screen and (max-width: 756px){
+  td {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  }

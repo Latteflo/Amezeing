@@ -4,7 +4,7 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-color: #f0f0f0;
+    background-color: #5b5252;
   }
   
   table {
@@ -12,25 +12,36 @@ body {
   }
   
   td {
-    width: 20px;
-    height: 20px;
+    width: 3rem;
+    height: 3rem;
   }
   
   .wall {    
     background-image: url(assets/wall.png);
     background-color: #444;
   }
-  
-  .path, .start, .end {
+
+  .path {
     background-image: url(assets/path.png);
-    background-color: #fff;
+    background-color: #50cb6e;
+  }
+  .gate{
+    background-image: url(/assets/gate.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: #50cb6e;
   }
   
-  .start {
-    background-image: url(assets/hero.png);
+  .hero {
+    background-image: url(./assets/hero.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: #50cb6e;
   }
   .treasure {
     background-image:url(assets/gem.png);
-    background-color: #ffff00;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: #cad048;
   }
   

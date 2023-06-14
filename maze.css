@@ -1,0 +1,41 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+  }
+  
+  table {
+    border-collapse: collapse;
+  }
+  
+  td {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .wall {
+    background-color: #444;
+  }
+  
+  .path, .start, .end {
+    background-color: #fff;
+  }
+  
+  .start {
+    background-color: #0f0;
+  }
+  
+  .end {
+    background-color: #f00;
+  }
+  
+  .player {
+    background-color: #00f;
+  }
+  .treasure{
+    background-color: #ffff00;
+  }
+  

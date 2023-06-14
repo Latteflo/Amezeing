@@ -1,3 +1,5 @@
+// Define each level of the game as a 2D array.
+// "*" represents a wall, "." represents a path, "S" is the starting point, and "T" is the treasure.
 const LEVEL_1 = [
   ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
   ["*", "S", ".", ".", ".", ".", ".", "*", "*", ".", "*", ".", "T"],
@@ -233,160 +235,157 @@ const LEVEL_6 = [
   ["*", ".", ".", ".", ".", ".", ".", ".", ".", "T", "*"],
   ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
 ]
+const LEVEL_7 = [
+  ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+  ["*", "S", ".", ".", ".", "*", "*", "*", ".", ".", ".", ".", "*"],
+  ["*", "*", "*", "*", ".", "*", "*", "*", ".", "*", "*", ".", "*"],
+  ["*", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "*"],
+  ["*", "*", "*", "*", ".", "*", "*", "*", ".", "*", "*", "*", "*"],
+  ["*", ".", ".", ".", ".", "*", "*", "*", ".", ".", ".", ".", "*"],
+  ["*", "*", "*", "*", "*", "*", "*", "*", ".", "*", "*", "*", "*"],
+  ["*", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "T", "*"],
+  ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"]
+];
 
-const LEVELS = [LEVEL_1, LEVEL_2, LEVEL_3, LEVEL_4, LEVEL_5, LEVEL_6]
+const LEVEL_8 = [
+  ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+  ["*", "S", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+  ["*", ".", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+  ["*", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "*"],
+  ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", ".", "*"],
+  ["*", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "*"],
+  ["*", ".", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+  ["*", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "T", "*"],
+  ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"]
+];
 
-// Variables to store the player's current position
-let playerRow = 0
-let playerCol = 0
-let currentLevel = 0
+const LEVEL_9 = [
+  ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+  ["*", "S", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+  ["*", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "*"],
+  ["*", "*", "*", "*", "*", "*", "*", "*", ".", ".", ".", ".", "*"],
+  ["*", "*", "*", "*", "*", "*", "*", "*", ".", "*", "*", "*", "*"],
+  ["*", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "*"],
+  ["*", ".", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+  ["*", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "T", "*"],
+  ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"]
+];
 
-// Function to create the maze
-const createMaze = (level) => {
-  // Selecting the main tag where the maze will be inserted
-  const mazeDiv = document.querySelector("main")
+const LEVEL_10 = [
+  ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+  ["*", "S", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+  ["*", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "*"],
+  ["*", "*", "*", ".", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+  ["*", ".", ".", ".", "*", "*", "*", "*", "*", "*", "*", "*", "*"],
+  ["*", "*", "*", ".", ".", ".", ".", ".", ".", ".", ".", ".", "*"],
+  ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", ".", "*"],
+  ["*", "T", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "*"],
+  ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*"]
+];
 
-  // Creating a table to represent the maze
-  const table = document.createElement("table")
+// Create an array of all the levels for easy access later.
+const LEVELS = [LEVEL_1, LEVEL_2, LEVEL_3, LEVEL_4, LEVEL_5, LEVEL_6, LEVEL_7, LEVEL_8, LEVEL_9, LEVEL_10];
 
-  // Iterating over each row in the level
+// Initialize game variables. 
+
+
+// currentLevel tracks the current level the player is on.
+let currentLevel = 0;
+// playerPosition tracks the player's current position in the maze.
+let playerPosition = { row: 0, col: 0 };
+
+// Function to create the visual representation of the maze.
+function createMaze(level) {
+  // It takes a level as an argument and uses this to create a table with rows and cells.
+  const mazeDiv = document.querySelector("main");
+  mazeDiv.innerHTML = "";
+
+  const table = document.createElement("table");
+
   for (let i = 0; i < level.length; i++) {
-    // Creating a table row for each row in the level
-    const row = document.createElement("tr")
+    const row = document.createElement("tr");
 
-    // Iterating over each cell in the row
     for (let j = 0; j < level[i].length; j++) {
-      // Creating a table cell for each cell in the row
-      const cell = document.createElement("td")
-
-      // Styling the cell
-      cell.style.width = "3rem"
-      cell.style.height = "3rem"
-
-      // Coloring the cell based on its value in the level
+      const cell = document.createElement("td");
+// Each cell is given a CSS class based on its type (wall, path, start, or treasure).
       switch (level[i][j]) {
         case "*":
-          cell.style.backgroundColor = "green" // Walls are green
-          break
+          cell.classList.add("wall");
+          break;
         case ".":
-          cell.style.backgroundColor = "white" // Paths are white
-          break
+          cell.classList.add("path");
+          break;
         case "S":
-          cell.style.backgroundColor = "yellow" // Start is yellow
-          break
+          cell.classList.add("start");
+          playerPosition = { row: i, col: j };
+          break;
         case "T":
-          cell.style.backgroundColor = "red" // Treasure is red
-          break
+          cell.classList.add("treasure");
+          break;
       }
 
-      // Appending the cell to the row
-      row.appendChild(cell)
+      row.appendChild(cell);
     }
 
-    // Appending the row to the table
-    table.appendChild(row)
+    table.appendChild(row);
   }
 
-  // Appending the table to the main tag
-  mazeDiv.appendChild(table)
+  mazeDiv.appendChild(table);
+}
 
-  // Find the player's starting position
-  for (let i = 0; i < level.length; i++) {
-    for (let j = 0; j < level[i].length; j++) {
-      if (level[i][j] === "S") {
-        playerRow = i
-        playerCol = j
+// Function to handle the player's movement.
+
+function handlePlayerMove(event) {
+  const level = LEVELS[currentLevel];
+  let newPosition = { ...playerPosition };
+
+// It is called whenever a keydown event occurs.
+// It checks which arrow key was pressed and updates the player's position accordingly.
+
+  switch (event.key) {
+    case "ArrowUp":
+      newPosition.row--;
+      break;
+    case "ArrowDown":
+      newPosition.row++;
+      break;
+    case "ArrowLeft":
+      newPosition.col--;
+      break;
+    case "ArrowRight":
+      newPosition.col++;
+      break;
+  }
+// If the new position is a wall, it doesn't update the player's position.
+  if (
+    newPosition.row >= 0 &&
+    newPosition.row < level.length &&
+    newPosition.col >= 0 &&
+    newPosition.col < level[0].length &&
+    level[newPosition.row][newPosition.col] !== "*"
+  ) {
+    const table = document.querySelector("table");
+    const oldCell = table.rows[playerPosition.row].cells[playerPosition.col];
+    const newCell = table.rows[newPosition.row].cells[newPosition.col];
+
+    oldCell.classList.remove("start");
+    newCell.classList.add("start");
+
+    playerPosition = newPosition;
+// If it's a treasure, the player proceeds to the next level.
+    if (level[newPosition.row][newPosition.col] === "T") {
+      currentLevel++;
+
+      if (currentLevel < LEVELS.length) {
+        createMaze(LEVELS[currentLevel]);
+      } else {
+        alert("Congratulations! You have completed all levels!");
       }
     }
   }
 }
+// Add an event listener for keydown events on the window and call the handlePlayerMove
+window.addEventListener("keydown", handlePlayerMove);
 
-// Function to clear the current maze
-function clearMaze() {
-  const mazeDiv = document.querySelector("main")
-  while (mazeDiv.firstChild) {
-    mazeDiv.removeChild(mazeDiv.firstChild)
-  }
-}
-
-// Function to update the player's position in the DOM
-function updatePlayerPosition(oldRow, oldCol, newRow, newCol) {
-  const table = document.querySelector("table")
-  const oldCell = table.rows[oldRow].cells[oldCol]
-  const newCell = table.rows[newRow].cells[newCol]
-
-  oldCell.style.backgroundColor = "white" // Set the old cell color to path color
-  newCell.style.backgroundColor = "yellow" // Set the new cell color to player color
-}
-
-// Player movement
-const player = (level) => {
-  // Listen for keypress events
-  window.addEventListener("keydown", (event) => {
-    // Variables to store the new player position
-    let newRow = playerRow
-    let newCol = playerCol
-
-    // Calculate the new player position based on the key pressed
-    switch (event.key) {
-      case "ArrowUp":
-        newRow--
-        break
-      case "ArrowDown":
-        newRow++
-        break
-      case "ArrowLeft":
-        newCol--
-        break
-      case "ArrowRight":
-        newCol++
-        break
-    }
-
-    // Check if the move is valid (i.e., the player is not trying to move into a wall)
-    if (
-      newRow >= 0 &&
-      newRow < level.length &&
-      newCol >= 0 &&
-      newCol < level[0].length &&
-      level[newRow][newCol] !== "*"
-    ){
-      // Update the player's position in the DOM
-      updatePlayerPosition(playerRow, playerCol, newRow, newCol)
-
-      // Update the player's current position
-      playerRow = newRow
-      playerCol = newCol
-
-      // Check if the player has reached the target
-      if (level[newRow][newCol] === "T") {
-        // Player has reached the target, go to the next level
-        currentLevel++
-
-        if (currentLevel < LEVELS.length) {
-          // Clear the current maze
-          clearMaze()
-
-          // Create the new maze
-          createMaze(LEVELS[currentLevel])
-
-          // Initialize the player for the new maze
-          player(LEVELS[currentLevel])
-        } else {
-          // All levels completed, display a congratulation message
-          const mazeDiv = document.querySelector("main")
-          const message = document.createElement("h1")
-          message.textContent =
-            "Congratulations! You have completed all levels!"
-          mazeDiv.appendChild(message)
-        }
-      }
-    }
-  })
-}
-
-// Call the function to create the maze for the first level
-createMaze(LEVELS[currentLevel])
-
-// Initialize the player for the first level
-player(LEVELS[currentLevel])
+// Start the game by creating the first level of the maze.
+createMaze(LEVELS[currentLevel]);

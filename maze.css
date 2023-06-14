@@ -1,0 +1,36 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+  }
+  
+  table {
+    border-collapse: collapse;
+  }
+  
+  td {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .wall {    
+    background-image: url(assets/wall.png);
+    background-color: #444;
+  }
+  
+  .path, .start, .end {
+    background-image: url(assets/path.png);
+    background-color: #fff;
+  }
+  
+  .start {
+    background-image: url(assets/hero.png);
+  }
+  .treasure {
+    background-image:url(assets/gem.png);
+    background-color: #ffff00;
+  }
+  

@@ -16,26 +16,21 @@ body {
     height: 20px;
   }
   
-  .wall {
+  .wall {    
+    background-image: url(assets/wall.png);
     background-color: #444;
   }
   
   .path, .start, .end {
+    background-image: url(assets/path.png);
     background-color: #fff;
   }
   
   .start {
-    background-color: #0f0;
+    background-image: url(assets/hero.png);
   }
-  
-  .end {
-    background-color: #f00;
-  }
-  
-  .player {
-    background-color: #00f;
-  }
-  .treasure{
+  .treasure {
+    background-image:url(assets/gem.png);
     background-color: #ffff00;
   }
   

@@ -298,11 +298,11 @@ const LEVELS = [
 ]
 
 // Initialize game variables.
+let currentLevel = 0 // currentLevel tracks the current level the player is on.
 
-// currentLevel tracks the current level the player is on.
-let currentLevel = 0
-// playerPosition tracks the player's current position in the maze.
-let playerPosition = { row: 0, col: 0 }
+// variables to store the player's previous and next-to-previous positions.
+let previousPosition = { row: 0, col: 0 }
+let nextToPreviousPosition = { row: 0, col: 0 }
 
 // Function to create the visual representation of the maze.
 function createMaze(level) {
@@ -342,39 +342,64 @@ function createMaze(level) {
   }
 
   mazeDiv.appendChild(table)
+  updateFogOfWar()
 }
 
-// Function to handle the player's movement.
-  // It is called whenever a keydown event occurs.
-
-function handlePlayerMove(event) {
+// It is called whenever a keydown event occurs.
+function handlePlayerMove(direction) {
   const level = LEVELS[currentLevel]
   let newPosition = { ...playerPosition }
 
+  // Update the nextToPreviousPosition before updating the previousPosition.
+  nextToPreviousPosition = { ...previousPosition }
+  previousPosition = { ...playerPosition }
+
   // It checks which arrow key was pressed and updates the player's position accordingly.
 
-  switch (event.key) {
-    case "ArrowUp":
+  switch (direction) {
+    case "up":
       newPosition.row--
       break
-    case "ArrowDown":
+    case "down":
       newPosition.row++
       break
-    case "ArrowLeft":
+    case "left":
       newPosition.col--
       break
-    case "ArrowRight":
+    case "right":
       newPosition.col++
       break
   }
+
   // If the new position is a wall, it doesn't update the player's position.
   if (
     newPosition.row >= 0 &&
     newPosition.row < level.length &&
     newPosition.col >= 0 &&
-    newPosition.col < level[0].length &&
-    level[newPosition.row][newPosition.col] !== "*"
+    newPosition.col < level[0].length
   ) {
+    if (level[newPosition.row][newPosition.col] === "*") {
+      // If the player hits a wall, move them back 2 steps.
+      newPosition = nextToPreviousPosition
+    } else if (level[newPosition.row][newPosition.col] === "T") {
+      // If the player finds the treasure, proceed to the next level.
+      currentLevel++
+
+      if (currentLevel < LEVELS.length) {
+        createMaze(LEVELS[currentLevel])
+      } else {
+        const gameWonMessage = document.createElement("h1")
+        gameWonMessage.textContent = "Congratulations! You have completed all levels!"
+        gameWonMessage.style.position = "fixed"
+        gameWonMessage.style.top = "50%"
+        gameWonMessage.style.left = "50%"
+        gameWonMessage.style.transform = "translate(-50%, -50%)"
+        gameWonMessage.style.textAlign = "center"
+        gameWonMessage.style.color = "#cad048" 
+        document.body.appendChild(gameWonMessage)
+      }
+    }
+    // Update the player's position on the board.
     const table = document.querySelector("table")
     const oldCell = table.rows[playerPosition.row].cells[playerPosition.col]
     const newCell = table.rows[newPosition.row].cells[newPosition.col]
@@ -384,20 +409,95 @@ function handlePlayerMove(event) {
     newCell.classList.add("hero")
 
     playerPosition = newPosition
-    // If it's a treasure, the player proceeds to the next level.
-    if (level[newPosition.row][newPosition.col] === "T") {
-      currentLevel++
+    updateFogOfWar() // Call this function after every move to update the visibility around the player.
+  }
+}
 
-      if (currentLevel < LEVELS.length) {
-        createMaze(LEVELS[currentLevel])
-      } else {
-        alert("Congratulations! You have completed all levels!")
-      }
+// Function to implement the fog of war.
+function updateFogOfWar() {
+  const visibilityRadius = 1 // Define the visibility radius.
+  const table = document.querySelector("table")
+
+  // First, make all cells invisible.
+  for (let i = 0; i < table.rows.length; i++) {
+    for (let j = 0; j < table.rows[i].cells.length; j++) {
+      table.rows[i].cells[j].classList.add("fog")
+    }
+  }
+
+  // Then, make cells within the visibility radius visible.
+  for (
+    let i = Math.max(playerPosition.row - visibilityRadius, 0);
+    i <= Math.min(playerPosition.row + visibilityRadius, table.rows.length - 1);
+    i++
+  ) {
+    for (
+      let j = Math.max(playerPosition.col - visibilityRadius, 0);
+      j <=
+      Math.min(
+        playerPosition.col + visibilityRadius,
+        table.rows[i].cells.length - 1
+      );
+      j++
+    ) {
+      table.rows[i].cells[j].classList.remove("fog")
     }
   }
 }
-// Add an event listener for keydown events on the window and call the handlePlayerMove
-window.addEventListener("keydown", handlePlayerMove)
+
+// Function to handle the player's movement.
+window.addEventListener('keydown', function(event) {
+  let direction;
+  switch (event.key) {
+    case "ArrowUp":
+      direction = "up";
+      break
+    case "ArrowDown":
+      direction = "down";
+      break
+    case "ArrowLeft":
+      direction = "left";
+      break
+    case "ArrowRight":
+      direction = "right";
+      break
+  }
+  handlePlayerMove(direction);
+});
+
+// For touch events
+let touchStartX = 0;
+let touchStartY = 0;
+
+window.addEventListener('touchstart', function(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+}, false);
+
+window.addEventListener('touchend', function(e) {
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    let direction;
+
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+        // Horizontal swipe
+        if (diffX > 0) {
+            direction = "right";
+        } else {
+            direction = "left";
+        }
+    } else {
+        // Vertical swipe
+        if (diffY > 0) {
+            direction = "down";
+        } else {
+            direction = "up";
+        }
+    }
+    handlePlayerMove(direction);
+}, false);
 
 // Start the game by creating the first level of the maze.
 createMaze(LEVELS[currentLevel])

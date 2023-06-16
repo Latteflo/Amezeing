@@ -4,7 +4,7 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-color: #5b5252;
+    background-color: #b7a6a698;
   }
   
   table {
@@ -45,6 +45,19 @@ body {
     background-color: #cad048;
   }
   
+  .fog {
+    background-color: #808080;  
+    opacity: 0;
+  }
+
+  h1{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    font: 700;
+    color: #cad048;
+  }
 
   @media screen and (max-width: 756px){
   td {

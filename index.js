@@ -301,8 +301,10 @@ const LEVELS = [
 
 // currentLevel tracks the current level the player is on.
 let currentLevel = 0
-// playerPosition tracks the player's current position in the maze.
-let playerPosition = { row: 0, col: 0 }
+
+// variables to store the player's previous and next-to-previous positions.
+let previousPosition = { row: 0, col: 0 }
+let nextToPreviousPosition = { row: 0, col: 0 }
 
 // Function to create the visual representation of the maze.
 function createMaze(level) {
@@ -342,14 +344,19 @@ function createMaze(level) {
   }
 
   mazeDiv.appendChild(table)
+  updateFogOfWar()
 }
 
 // Function to handle the player's movement.
-  // It is called whenever a keydown event occurs.
 
+// It is called whenever a keydown event occurs.
 function handlePlayerMove(event) {
   const level = LEVELS[currentLevel]
   let newPosition = { ...playerPosition }
+
+  // Update the nextToPreviousPosition before updating the previousPosition.
+  nextToPreviousPosition = { ...previousPosition }
+  previousPosition = { ...playerPosition }
 
   // It checks which arrow key was pressed and updates the player's position accordingly.
 
@@ -372,9 +379,23 @@ function handlePlayerMove(event) {
     newPosition.row >= 0 &&
     newPosition.row < level.length &&
     newPosition.col >= 0 &&
-    newPosition.col < level[0].length &&
-    level[newPosition.row][newPosition.col] !== "*"
+    newPosition.col < level[0].length
   ) {
+    if (level[newPosition.row][newPosition.col] === "*") {
+      // If the player hits a wall, move them back 2 steps.
+      newPosition = nextToPreviousPosition
+    } else if (level[newPosition.row][newPosition.col] === "T") {
+      // If the player finds the treasure, proceed to the next level.
+      currentLevel++
+
+      if (currentLevel < LEVELS.length) {
+        createMaze(LEVELS[currentLevel])
+      } else {
+        alert("Congratulations! You have completed all levels!")
+        return
+      }
+    }
+    // Update the player's position on the board.
     const table = document.querySelector("table")
     const oldCell = table.rows[playerPosition.row].cells[playerPosition.col]
     const newCell = table.rows[newPosition.row].cells[newPosition.col]
@@ -384,18 +405,42 @@ function handlePlayerMove(event) {
     newCell.classList.add("hero")
 
     playerPosition = newPosition
-    // If it's a treasure, the player proceeds to the next level.
-    if (level[newPosition.row][newPosition.col] === "T") {
-      currentLevel++
+    updateFogOfWar() // Call this function after every move to update the visibility around the player.
+  }
+}
 
-      if (currentLevel < LEVELS.length) {
-        createMaze(LEVELS[currentLevel])
-      } else {
-        alert("Congratulations! You have completed all levels!")
-      }
+// Function to implement the fog of war.
+function updateFogOfWar() {
+  const visibilityRadius = 1 // Define the visibility radius.
+  const table = document.querySelector("table")
+
+  // First, make all cells invisible.
+  for (let i = 0; i < table.rows.length; i++) {
+    for (let j = 0; j < table.rows[i].cells.length; j++) {
+      table.rows[i].cells[j].classList.add("fog")
+    }
+  }
+
+  // Then, make cells within the visibility radius visible.
+  for (
+    let i = Math.max(playerPosition.row - visibilityRadius, 0);
+    i <= Math.min(playerPosition.row + visibilityRadius, table.rows.length - 1);
+    i++
+  ) {
+    for (
+      let j = Math.max(playerPosition.col - visibilityRadius, 0);
+      j <=
+      Math.min(
+        playerPosition.col + visibilityRadius,
+        table.rows[i].cells.length - 1
+      );
+      j++
+    ) {
+      table.rows[i].cells[j].classList.remove("fog")
     }
   }
 }
+
 // Add an event listener for keydown events on the window and call the handlePlayerMove
 window.addEventListener("keydown", handlePlayerMove)
 

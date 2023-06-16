@@ -298,9 +298,7 @@ const LEVELS = [
 ]
 
 // Initialize game variables.
-
-// currentLevel tracks the current level the player is on.
-let currentLevel = 0
+let currentLevel = 0 // currentLevel tracks the current level the player is on.
 
 // variables to store the player's previous and next-to-previous positions.
 let previousPosition = { row: 0, col: 0 }
@@ -347,10 +345,8 @@ function createMaze(level) {
   updateFogOfWar()
 }
 
-// Function to handle the player's movement.
-
 // It is called whenever a keydown event occurs.
-function handlePlayerMove(event) {
+function handlePlayerMove(direction) {
   const level = LEVELS[currentLevel]
   let newPosition = { ...playerPosition }
 
@@ -360,20 +356,21 @@ function handlePlayerMove(event) {
 
   // It checks which arrow key was pressed and updates the player's position accordingly.
 
-  switch (event.key) {
-    case "ArrowUp":
+  switch (direction) {
+    case "up":
       newPosition.row--
       break
-    case "ArrowDown":
+    case "down":
       newPosition.row++
       break
-    case "ArrowLeft":
+    case "left":
       newPosition.col--
       break
-    case "ArrowRight":
+    case "right":
       newPosition.col++
       break
   }
+
   // If the new position is a wall, it doesn't update the player's position.
   if (
     newPosition.row >= 0 &&
@@ -391,8 +388,15 @@ function handlePlayerMove(event) {
       if (currentLevel < LEVELS.length) {
         createMaze(LEVELS[currentLevel])
       } else {
-        alert("Congratulations! You have completed all levels!")
-        return
+        const gameWonMessage = document.createElement("h1")
+        gameWonMessage.textContent = "Congratulations! You have completed all levels!"
+        gameWonMessage.style.position = "fixed"
+        gameWonMessage.style.top = "50%"
+        gameWonMessage.style.left = "50%"
+        gameWonMessage.style.transform = "translate(-50%, -50%)"
+        gameWonMessage.style.textAlign = "center"
+        gameWonMessage.style.color = "#cad048" 
+        document.body.appendChild(gameWonMessage)
       }
     }
     // Update the player's position on the board.
@@ -441,8 +445,59 @@ function updateFogOfWar() {
   }
 }
 
-// Add an event listener for keydown events on the window and call the handlePlayerMove
-window.addEventListener("keydown", handlePlayerMove)
+// Function to handle the player's movement.
+window.addEventListener('keydown', function(event) {
+  let direction;
+  switch (event.key) {
+    case "ArrowUp":
+      direction = "up";
+      break
+    case "ArrowDown":
+      direction = "down";
+      break
+    case "ArrowLeft":
+      direction = "left";
+      break
+    case "ArrowRight":
+      direction = "right";
+      break
+  }
+  handlePlayerMove(direction);
+});
+
+// For touch events
+let touchStartX = 0;
+let touchStartY = 0;
+
+window.addEventListener('touchstart', function(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+}, false);
+
+window.addEventListener('touchend', function(e) {
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    let direction;
+
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+        // Horizontal swipe
+        if (diffX > 0) {
+            direction = "right";
+        } else {
+            direction = "left";
+        }
+    } else {
+        // Vertical swipe
+        if (diffY > 0) {
+            direction = "down";
+        } else {
+            direction = "up";
+        }
+    }
+    handlePlayerMove(direction);
+}, false);
 
 // Start the game by creating the first level of the maze.
 createMaze(LEVELS[currentLevel])

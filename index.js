@@ -344,18 +344,15 @@ function createMaze(level) {
   mazeDiv.appendChild(table)
   updateFogOfWar()
 }
-
 // It is called whenever a keydown event occurs.
 function handlePlayerMove(direction) {
   const level = LEVELS[currentLevel]
   let newPosition = { ...playerPosition }
 
-  // Update the nextToPreviousPosition before updating the previousPosition.
-  nextToPreviousPosition = { ...previousPosition }
+  // Update the previousPosition.
   previousPosition = { ...playerPosition }
 
   // It checks which arrow key was pressed and updates the player's position accordingly.
-
   switch (direction) {
     case "up":
       newPosition.row--
@@ -371,20 +368,17 @@ function handlePlayerMove(direction) {
       break
   }
 
-  // If the new position is a wall, it doesn't update the player's position.
+  // If the new position is within the maze boundaries and is not a wall
   if (
     newPosition.row >= 0 &&
     newPosition.row < level.length &&
     newPosition.col >= 0 &&
-    newPosition.col < level[0].length
+    newPosition.col < level[0].length &&
+    level[newPosition.row][newPosition.col] !== "*"
   ) {
-    if (level[newPosition.row][newPosition.col] === "*") {
-      // If the player hits a wall, move them back 2 steps.
-      newPosition = nextToPreviousPosition
-    } else if (level[newPosition.row][newPosition.col] === "T") {
-      // If the player finds the treasure, proceed to the next level.
+    // If the player finds the treasure, proceed to the next level.
+    if (level[newPosition.row][newPosition.col] === "T") {
       currentLevel++
-
       if (currentLevel < LEVELS.length) {
         createMaze(LEVELS[currentLevel])
       } else {
@@ -412,6 +406,7 @@ function handlePlayerMove(direction) {
     updateFogOfWar() // Call this function after every move to update the visibility around the player.
   }
 }
+
 
 // Function to implement the fog of war.
 function updateFogOfWar() {
